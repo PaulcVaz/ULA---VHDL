@@ -1,0 +1,603 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use work.incremento1;
+use work.trocaSinal;
+use work.shift;
+use work.comparador;
+use work.subtracao;
+use work.decremento1;
+use work.andModule;
+use work.switch;
+use work.Somador;
+use work.auxiliarControl;
+
+-- Este módulo controla quais operações serão realizadas --
+
+
+
+entity moduloControlador is
+    Port ( 
+           c0 : in  STD_LOGIC := '0';
+           c1 : in  STD_LOGIC := '0';
+           c2 : in  STD_LOGIC := '0';
+			  clk : in STD_LOGIC;
+			  out0 : out  STD_LOGIC;
+           out1 : out  STD_LOGIC;
+           out2 : out  STD_LOGIC;
+           out3 : out  STD_LOGIC;
+           ZERO : OUT  STD_LOGIC;
+			  OVERFLOW : out  STD_LOGIC;
+           CARRYOUT : out  STD_LOGIC;
+           NEGATIVO : out  STD_LOGIC);
+end moduloControlador;
+
+architecture Behavioral of moduloControlador is
+
+component auxiliarControl is
+    Port ( A : in  STD_LOGIC;
+           B : in  STD_LOGIC;
+           C : in  STD_LOGIC;
+			  clk : in  STD_LOGIC ;
+           OUT0 : out  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+           OUT3 : out  STD_LOGIC;
+           OUT4 : out  STD_LOGIC;
+           OUT5 : out  STD_LOGIC;
+           OUT6 : out  STD_LOGIC;
+           OUT7 : out  STD_LOGIC);
+end component;
+
+
+component Somador is
+    Port ( A0 : in  STD_LOGIC ;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+			  ENABLE : IN STD_LOGIC;
+			  clk : in STD_LOGIC;
+           B0 : in  STD_LOGIC ;
+           B1 : in  STD_LOGIC ;
+           B2 : in  STD_LOGIC ;
+           B3 : in  STD_LOGIC ;
+           Cout : OUT  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC);
+end component;
+
+component incremento1 is
+    Port ( A0 : in  STD_LOGIC ;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+           ENABLE : IN STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  Cout : OUT  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC);
+end component;
+
+component subtracao is
+    Port ( a0 : in  STD_LOGIC ;
+           a1 : in  STD_LOGIC ;
+           a2 : in  STD_LOGIC ;
+           a3 : in  STD_LOGIC ;
+           b0 : in  STD_LOGIC ;
+           b1 : in  STD_LOGIC ;
+           b2 : in  STD_LOGIC ;
+           b3 : in  STD_LOGIC ;
+           ENABLE : IN STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  out0 : out  STD_LOGIC;
+           out1 : out  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           out2 : out  STD_LOGIC;
+           out3 : out  STD_LOGIC;
+           overflow : out  STD_LOGIC;
+           cout : out  STD_LOGIC;
+           neg : out  STD_LOGIC);
+end component;
+
+
+component decremento1 is
+    Port ( A0 : in  STD_LOGIC ;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+           ENABLE : IN STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  OUT0 : out  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+           OUT3 : out  STD_LOGIC;
+           OVERFLOW : out  STD_LOGIC;
+           COUT : OUT  STD_LOGIC;
+			  NEG : OUT STD_LOGIC);
+end component;
+
+component trocaSinal is
+    Port ( A0 : in  STD_LOGIC;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+           ENABLE : IN STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  Cout : OUT  STD_LOGIC;
+			  neg : OUT  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC );
+end component;
+
+
+component shift is
+    Port ( A0 : in  STD_LOGIC ;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+			  clk : in STD_LOGIC;
+           B0 : in  STD_LOGIC ;
+           B1 : in  STD_LOGIC ;
+           B2 : in  STD_LOGIC ;
+           B3 : in  STD_LOGIC ;
+			  Enable : in STD_Logic;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC);
+end component;
+
+component comparador is
+    Port ( A0 : in  STD_LOGIC ;
+           A1 : in  STD_LOGIC ;
+           A2 : in  STD_LOGIC ;
+           A3 : in  STD_LOGIC ;
+			  clk : in STD_LOGIC;
+           B0 : in  STD_LOGIC ;
+           B1 : in  STD_LOGIC ;
+           B2 : in  STD_LOGIC ;
+           B3 : in  STD_LOGIC ;
+			  enable : in STD_LOGIC;
+           OUT0 : OUT STD_LOGIC;
+           OUT1 : OUT STD_LOGIC;
+           OUT2 : OUT STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT3 : OUT STD_LOGIC);
+end component;
+
+component andModule is
+    Port ( A0 : in  STD_LOGIC;
+           A1 : in  STD_LOGIC;
+           A2 : in  STD_LOGIC;
+           A3 : in  STD_LOGIC;
+           B0 : in  STD_LOGIC;
+           B1 : in  STD_LOGIC;
+           B2 : in  STD_LOGIC;
+           B3 : in  STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  ENABLE : IN STD_LOGIC;
+           OUT0 : out  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT3 : out  STD_LOGIC);
+end component;
+
+SIGNAL CC0 : STD_LOGIC;
+SIGNAL CC1 : STD_LOGIC;
+SIGNAL CC2 : STD_LOGIC;
+SIGNAL CC3 : STD_LOGIC;
+SIGNAL CC4 : STD_LOGIC;
+SIGNAL CC5 : STD_LOGIC;
+SIGNAL CC6 : STD_LOGIC;
+SIGNAL CC7 : STD_LOGIC;
+SIGNAL OUT00 : STD_LOGIC;
+SIGNAL OUT01 : STD_LOGIC;
+SIGNAL OUT02 : STD_LOGIC;
+SIGNAL OUT03 : STD_LOGIC;
+SIGNAL OVERFLOW0 : STD_LOGIC;
+SIGNAL NEGATIVO0 : STD_LOGIC;
+SIGNAL CARRYOUT0 : STD_LOGIC;
+SIGNAL OUT10 : STD_LOGIC;
+SIGNAL OUT11 : STD_LOGIC;
+SIGNAL OUT12 : STD_LOGIC;
+SIGNAL OUT13 : STD_LOGIC;
+SIGNAL OVERFLOW1 : STD_LOGIC;
+SIGNAL NEGATIVO1 : STD_LOGIC;
+SIGNAL CARRYOUT1 : STD_LOGIC;
+SIGNAL OUT20 : STD_LOGIC;
+SIGNAL OUT21 : STD_LOGIC;
+SIGNAL OUT22 : STD_LOGIC;
+SIGNAL OUT23 : STD_LOGIC;
+SIGNAL OVERFLOW2 : STD_LOGIC;
+SIGNAL NEGATIVO2 : STD_LOGIC;
+SIGNAL CARRYOUT2 : STD_LOGIC;
+SIGNAL OUT30 : STD_LOGIC;
+SIGNAL OUT31 : STD_LOGIC;
+SIGNAL OUT32 : STD_LOGIC;
+SIGNAL OUT33 : STD_LOGIC;
+SIGNAL OVERFLOW3 : STD_LOGIC;
+SIGNAL NEGATIVO3 : STD_LOGIC;
+SIGNAL CARRYOUT3 : STD_LOGIC;
+SIGNAL OUT40 : STD_LOGIC;
+SIGNAL OUT41 : STD_LOGIC;
+SIGNAL OUT42 : STD_LOGIC;
+SIGNAL OUT43 : STD_LOGIC;
+SIGNAL OVERFLOW4 : STD_LOGIC;
+SIGNAL NEGATIVO4 : STD_LOGIC;
+SIGNAL CARRYOUT4 : STD_LOGIC;
+SIGNAL OUT50 : STD_LOGIC;
+SIGNAL OUT51 : STD_LOGIC;
+SIGNAL OUT52 : STD_LOGIC;
+SIGNAL OUT53 : STD_LOGIC;
+SIGNAL OVERFLOW5 : STD_LOGIC;
+SIGNAL NEGATIVO5 : STD_LOGIC;
+SIGNAL CARRYOUT5 : STD_LOGIC;
+SIGNAL OUT60 : STD_LOGIC;
+SIGNAL OUT61 : STD_LOGIC;
+SIGNAL OUT62 : STD_LOGIC;
+SIGNAL OUT63 : STD_LOGIC;
+SIGNAL OVERFLOW6 : STD_LOGIC;
+SIGNAL NEGATIVO6 : STD_LOGIC;
+SIGNAL CARRYOUT6 : STD_LOGIC;
+SIGNAL OUT70 : STD_LOGIC;
+SIGNAL OUT71 : STD_LOGIC;
+SIGNAL OUT72 : STD_LOGIC;
+SIGNAL OUT73 : STD_LOGIC;
+SIGNAL OVERFLOW7 : STD_LOGIC;
+SIGNAL NEGATIVO7 : STD_LOGIC;
+SIGNAL CARRYOUT7 : STD_LOGIC;
+SIGNAL A0 : STD_LOGIC;
+SIGNAL A1 : STD_LOGIC;
+SIGNAL A2 : STD_LOGIC;
+SIGNAL A3 : STD_LOGIC;
+SIGNAL B0 : STD_LOGIC;
+SIGNAL B1 : STD_LOGIC;
+SIGNAL B2 : STD_LOGIC;
+SIGNAL B3 : STD_LOGIC;
+
+
+SIGNAL ZERO0 : STD_LOGIC;
+SIGNAL ZERO1 : STD_LOGIC;
+SIGNAL ZERO2 : STD_LOGIC;
+SIGNAL ZERO3 : STD_LOGIC;
+SIGNAL ZERO4 : STD_LOGIC;
+SIGNAL ZERO5 : STD_LOGIC;
+SIGNAL ZERO6 : STD_LOGIC;
+SIGNAL ZERO7 : STD_LOGIC;
+SIGNAL FIRSTTIME : STD_LOGIC := '1';
+SIGNAL clock0 : integer;
+SIGNAL clock1 : integer;
+SIGNAL clock2 : integer;
+SIGNAL clock3 : integer;
+
+begin
+
+process (clk) begin
+-- Contador
+if (FIRSTTIME = '1') then
+A0 <= '0';
+A1 <= '0';
+A2 <= '0';
+A3 <= '0';
+B0 <= '0';
+B1 <= '0';
+B2 <= '1';
+B3 <= '1';
+clock0 <= 0;
+clock1 <= 0;
+clock2 <= 0;
+clock3 <= 0;
+FIRSTTIME <= '0';
+end if;
+if rising_edge(clk) then
+clock0 <= clock0 + 1;
+clock1 <= clock1 + 1;
+clock2 <= clock2 + 1;
+clock3 <= clock3 + 1;
+end if;
+-- 2000000 = 1s
+-- 600000 = 0,3 s
+if clock0 > 600000 then
+clock0 <= 0;
+A0 <= A0 Xor '1';
+B0 <= B0 Xor '1'; 
+end if;
+
+if clock1 > 1200000 then
+clock1 <= 0;
+A1 <= A1 Xor '1';
+B1 <= B1 Xor '1';
+end if;
+
+if clock2 > 2400000 then
+clock2 <= 0;
+A2 <= A2 Xor '1';
+B2 <= B2 Xor '1';
+end if;
+
+if clock3 = 4800000 then
+A3 <= A3 Xor '1';
+B3 <= B3 Xor '1';
+clock3 <= 0;
+end if;
+-- Fim do Contador
+end process;
+
+aux : auxiliarControl port map (
+	A => c2,
+	B => C1,
+	clk =>  clk,
+	C => C0,
+	OUT0 => CC0,
+	OUT1 => CC1,
+	OUT2 => CC2,
+	OUT3 => CC3,
+	OUT4 => CC4,
+	OUT5 => CC5,
+	OUT6 => CC6,
+	OUT7 => CC7);
+	
+sum : somador port map (
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+B0 => B0,
+B1 => B1,
+B2 => B2,
+B3 => B3,
+ZERO => ZERO0,
+ENABLE => CC0,
+OUT0 => OUT00,
+OUT1 => OUT01,
+OUT2 => OUT02,
+OUT3 => OUT03,
+OVERFLOW => OVERFLOW0,
+COUT => CARRYOUT0);
+
+inc1 : incremento1 port map(
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+ENABLE => CC1,
+OUT0 => OUT10,
+OUT1 => OUT11,
+OUT2 => OUT12,
+OUT3 => OUT13,
+ZERO => ZERO1,
+OVERFLOW => OVERFLOW1,
+COUT => CARRYOUT1);
+
+
+sub : subtracao port map (
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+ENABLE => CC2,
+B0 => B0,
+B1 => B1,
+B2 => B2,
+B3 => B3,
+OUT0 => OUT20,
+OUT1 => OUT21,
+OUT2 => OUT22,
+OUT3 => OUT23,
+ZERO => ZERO2,
+OVERFLOW => OVERFLOW2,
+NEG => NEGATIVO2,
+COUT => CARRYOUT2);
+
+
+dec1 : decremento1 port map(
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+ENABLE => CC3,
+OUT0 => OUT30,
+OUT1 => OUT31,
+OUT2 => OUT32,
+OUT3 => OUT33,
+ZERO => ZERO3,
+OVERFLOW => OVERFLOW3,
+NEG => NEGATIVO3,
+COUT => CARRYOUT3);
+
+trcS : trocaSinal port map(
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+ENABLE => CC4,
+OUT0 => OUT40,
+OUT1 => OUT41,
+OUT2 => OUT42,
+OUT3 => OUT43,
+ZERO => ZERO4,
+OVERFLOW => OVERFLOW4,
+NEG => NEGATIVO4,
+COUT => CARRYOUT4);
+
+
+shft : shift port map (
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+B0 => B0,
+B1 => B1,
+B2 => B2,
+B3 => B3,
+CLK => CLK,
+ENABLE => CC5,
+ZERO => ZERO1,
+OUT0 => OUT50,
+OUT1 => OUT51,
+OUT2 => OUT52,
+OUT3 => OUT53);
+
+comp : comparador port map (
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+B0 => B0,
+B1 => B1,
+B2 => B2,
+B3 => B3,
+CLK => CLK,
+ENABLE => CC6,
+ZERO => ZERO1,
+OUT0 => OUT60,
+OUT1 => OUT61,
+OUT2 => OUT62,
+OUT3 => OUT63);
+
+
+
+andM : andModule port map (
+A0 => A0,
+A1 => A1,
+A2 => A2,
+A3 => A3,
+CLK => CLK,
+ENABLE => CC7,
+B0 => B0,
+B1 => B1,
+B2 => B2,
+B3 => B3,
+OUT0 => OUT70,
+ZERO => ZERO1,
+OUT1 => OUT71,
+OUT2 => OUT72,
+OUT3 => OUT73);
+
+PROCESS (CLK) BEGIN
+if (CC0 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT00;
+OUT1 <= OUT01;
+OUT2 <= OUT02;
+OUT3 <= OUT03;
+ZERO <= ZERO0;
+CARRYOUT <= CARRYOUT0;
+OVERFLOW <= OVERFLOW0;
+NEGATIVO <= '0';
+else
+null;
+END IF;
+ 
+if (CC1 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT10;
+OUT1 <= OUT11;
+OUT2 <= OUT12;
+OUT3 <= OUT13;
+ZERO <= ZERO1;
+CARRYOUT <= CARRYOUT1;
+OVERFLOW <= OVERFLOW1;
+NEGATIVO <= '0';
+else
+null;
+END IF;
+ 
+if (CC2 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT20;
+OUT1 <= OUT21;
+OUT2 <= OUT22;
+OUT3 <= OUT23;
+ZERO <= ZERO2;
+CARRYOUT <= CARRYOUT2;
+OVERFLOW <= OVERFLOW2;
+NEGATIVO <= NEGATIVO2;
+else
+null;
+END IF;
+ 
+if (CC3 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT30;
+OUT1 <= OUT31;
+OUT2 <= OUT32;
+OUT3 <= OUT33;
+
+ZERO <= ZERO3;
+CARRYOUT <= CARRYOUT3;
+OVERFLOW <= OVERFLOW3;
+NEGATIVO <= NEGATIVO3;
+else
+null;
+END IF;
+ 
+if (CC4 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT40;
+OUT1 <= OUT41;
+OUT2 <= OUT42;
+OUT3 <= OUT43;
+ZERO <= ZERO4;
+CARRYOUT <= CARRYOUT4;
+OVERFLOW <= OVERFLOW4;
+NEGATIVO <= NEGATIVO4;
+else
+null;
+END IF;
+ 
+if (CC5 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT50;
+OUT1 <= OUT51;
+OUT2 <= OUT52;
+OUT3 <= OUT53;
+ZERO <= ZERO5;
+CARRYOUT <= '0';
+OVERFLOW <= '0';
+NEGATIVO <= '0';
+else
+null;
+END IF;
+ 
+if (CC6 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT60;
+OUT1 <= OUT61;
+OUT2 <= OUT62;
+OUT3 <= OUT63;
+ZERO <= ZERO6;
+CARRYOUT <= '0';
+OVERFLOW <= '0';
+NEGATIVO <= '0';
+else
+null;
+END IF;
+ 
+if (CC7 = '1' AND rising_edge(clk)) then
+OUT0 <= OUT70;
+OUT1 <= OUT71;
+OUT2 <= OUT72;
+OUT3 <= OUT73;
+ZERO <= ZERO7;
+CARRYOUT <= '0';
+OVERFLOW <= '0';
+NEGATIVO <= '0';
+else
+null;
+END IF;
+END PROCESS;
+
+end Behavioral;
