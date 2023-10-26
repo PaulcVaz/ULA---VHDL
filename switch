@@ -1,0 +1,44 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+-- MÓDULO AUXILIAR --
+entity switch is
+    Port ( A0 : in  STD_LOGIC;
+           B0 : in  STD_LOGIC;
+           A1 : in  STD_LOGIC;
+           B1 : in  STD_LOGIC;
+           A2 : in  STD_LOGIC;
+           B2 : in  STD_LOGIC;
+           A3 : in  STD_LOGIC;
+           B3 : in  STD_LOGIC;
+			  clk : in STD_LOGIC;
+           SWITCH : in  STD_LOGIC;
+           OUT0 : out  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+           OUT3 : out  STD_LOGIC;
+           VALUEOUT : out  STD_LOGIC;
+           VALUEINB : in  STD_LOGIC;
+           VALUEINA : in  STD_LOGIC);
+end switch;
+
+architecture Behavioral of switch is
+
+begin
+
+process (clk) begin
+if (switch = '1' and rising_edge(clk)) then
+OUT0 <= A0;
+OUT1 <= A1;
+OUT2 <= A2;
+OUT3 <= A3;
+VALUEOUT <= VALUEINB;
+elsif (switch = '0' and rising_edge(clk)) then
+OUT0 <= B0;
+OUT1 <= B1;
+OUT2 <= B2;
+OUT3 <= B3;
+VALUEOUT <= VALUEINB;
+end if;
+end process;
+
+end Behavioral;
