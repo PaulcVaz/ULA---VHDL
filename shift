@@ -1,0 +1,72 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use work.switch;
+-- Este módulo faz um SHIFT circular dos componentes da entrada A --
+-- A entrada B funciona como um controlador --
+-- Se B0 = '1' enquanto os outros são '0', então haverá um shift circular para a esquerda --
+-- Se B1 = '1' enquanto os outros são '0', então não haverá shift circular -- 
+-- Se B2 = '1' enquanto os outros são '0', então haverá um shift circular para a direita --
+-- Se B3 = '1' enquanto os outros são '0', então haverá uma inversão na ordem dos bits --
+-- Caso nenhuma destas configurações seja reconhecida, então a saída será '0','0','0','0'. --
+
+entity shift is
+    Port ( A0 : in  STD_LOGIC := '1';
+           A1 : in  STD_LOGIC := '1';
+           A2 : in  STD_LOGIC := '0';
+           A3 : in  STD_LOGIC := '0';
+           B0 : in  STD_LOGIC := '0';
+           B1 : in  STD_LOGIC := '0';
+           B2 : in  STD_LOGIC := '0';
+           B3 : in  STD_LOGIC := '1';
+			  clk : in  STD_LOGIC;
+			  Enable : in STD_Logic := '1';
+           
+			  ZERO : OUT  STD_LOGIC;
+			  OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC);
+end shift;
+
+architecture Behavioral of shift is
+
+begin
+
+process (clk)
+begin
+
+
+if (B0='1' and B2 = '0' and B3 = '0' and enable = '1' and rising_edge(clk)) then
+OUT0 <= A1;
+OUT1 <= A2;
+OUT2 <= A3;
+OUT3 <= A0;
+
+elsif (B0='0' and B1 = '0' and B2 = '1' and B3 = '0' and enable = '1' and rising_edge(clk)) then
+
+OUT0 <= A3;
+OUT1 <= A0;
+OUT2 <= A1;
+OUT3 <= A2;
+
+elsif (B0='0' and B1 = '1' and B2 = '0' and B3 = '0' and enable = '1'  and rising_edge(clk)) then
+OUT0 <= A0;
+OUT1 <= A1;
+OUT2 <= A2;
+OUT3 <= A3;
+
+elsif (B0='0' and B1 = '0' and B2 = '0' and B3 = '1' and enable = '1' and rising_edge(clk)) then
+OUT0 <= A3;
+OUT1 <= A2;
+OUT2 <= A1;
+OUT3 <= A0;
+
+else
+NULL;
+end if;
+end process;
+
+ZERO <= NOT (A0) OR NOT (A1) OR NOT (A2) OR NOT (A3);
+
+end Behavioral;
+
