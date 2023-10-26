@@ -1,0 +1,63 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+-- Este módulo faz a soma de A com B --
+entity Somador is
+    Port ( A0 : in  STD_LOGIC := '0';
+           A1 : in  STD_LOGIC := '0';
+           A2 : in  STD_LOGIC := '0';
+           A3 : in  STD_LOGIC := '1';
+           B0 : in  STD_LOGIC := '0';
+           B1 : in  STD_LOGIC := '0';
+           B2 : in  STD_LOGIC := '0';
+           B3 : in  STD_LOGIC := '0';
+			  clk : in STD_LOGIC;
+			  ENABLE : in  STD_LOGIC;
+           Cout : out  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC);
+end Somador;
+
+architecture Behavioral of Somador is
+SIGNAL C1 : STD_LOGIC;
+SIGNAL C2 : STD_LOGIC;
+SIGNAL C3 : STD_LOGIC;
+
+begin
+
+process (clk) begin
+if (enable = '1' and rising_edge(clk)) then
+
+OUT0 <= (not A0 and B0) or (A0 and not B0);
+C1 <= (A0 and B0);
+
+OUT1 <= (NOT A1 AND NOT B1 AND C1) OR (NOT A1 AND B1 AND NOT C1) OR (A1 AND B1 AND C1) OR (A1 AND NOT B1 AND NOT C1);
+C2 <= (B1 AND C1) OR (A1 AND C1) OR (A1 AND B1);
+
+OUT2 <= (NOT A2 AND NOT B2 AND C2) OR (NOT A2 AND B2 AND NOT C2) OR (A2 AND B2 AND C2) OR (A2 AND NOT B2 AND NOT C2);
+
+C3 <= (B2 AND C2) OR (A2 AND C2) OR (A2 AND B2);
+
+OUT3 <= (NOT A3 AND NOT B3 AND C3) OR (NOT A3 AND B3 AND NOT C3) OR (A3 AND B3 AND C3) OR (A3 AND NOT B3 AND NOT C3);
+
+COUT <= (B3 AND C3) OR (A3 AND C3) OR (A3 AND B3);
+
+OVERFLOW <= (B3 AND C3) OR (A3 AND C3) OR (A3 AND B3);
+
+ZERO <= NOT((not A0 and B0) or (A0 and not B0)) or 
+not ((NOT A1 AND NOT B1 AND C1) OR (NOT A1 AND B1 AND NOT C1) OR (A1 AND B1 AND C1) OR (A1 AND NOT B1 AND NOT C1)) or
+not ((NOT A2 AND NOT B2 AND C2) OR (NOT A2 AND B2 AND NOT C2) OR (A2 AND B2 AND C2) OR (A2 AND NOT B2 AND NOT C2)) or
+not ((NOT A3 AND NOT B3 AND C3) OR (NOT A3 AND B3 AND NOT C3) OR (A3 AND B3 AND C3) OR (A3 AND NOT B3 AND NOT C3));
+
+else
+null;
+end if;
+end process;
+
+
+
+
+end Behavioral;
