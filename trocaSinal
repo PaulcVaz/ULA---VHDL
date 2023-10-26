@@ -1,0 +1,75 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use work.incremento1;
+-- Este módulo troca o sinal de A --
+entity trocaSinal is
+    Port ( A0 : in  STD_LOGIC:= '1';
+           A1 : in  STD_LOGIC:= '0';
+           A2 : in  STD_LOGIC:= '0';
+           A3 : in  STD_LOGIC:= '0';
+           Cout : out  STD_LOGIC;
+			  neg : OUT  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+			  clk : in STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC:= '0';
+			  enable : in std_logic := '1');
+end trocaSinal;
+
+architecture Behavioral of trocaSinal is
+signal A00 : STD_LOGIC;
+signal A10 : STD_LOGIC;
+signal A20 : STD_LOGIC;
+signal A30 : STD_LOGIC;
+
+component incremento1 is
+    Port ( A0 : in  STD_LOGIC := '1';
+           A1 : in  STD_LOGIC := '1';
+           A2 : in  STD_LOGIC := '1';
+           A3 : in  STD_LOGIC := '0';
+			  clk : in STD_LOGIC;
+ 			  ENABLE : in  STD_LOGIC;
+           Cout : out  STD_LOGIC;
+           OUT0 : OUT  STD_LOGIC;
+           OUT1 : OUT  STD_LOGIC;
+           OUT2 : OUT  STD_LOGIC;
+           OUT3 : OUT  STD_LOGIC;
+			  ZERO : OUT STD_LOGIC;
+           OVERFLOW : OUT  STD_LOGIC);
+end component;
+
+begin
+
+A00 <= not A0;
+
+A10 <= not A1;
+
+A20 <= not A2;
+
+A30 <= not A3;
+
+NEG <= not A3;
+
+somaum : incremento1 port map(
+	A0 => A00,
+	A1 => A10,
+	A2 => A20,
+	A3 => A30,
+	clk => clk,
+	OUT0 => OUT0,
+	OUT1 => OUT1,
+	OUT2 => OUT2,
+	OUT3 => OUT3,
+	ENABLE => ENABLE,
+	ZERO => ZERO,
+	OVERFLOW=>OVERFLOW,
+	COUT=>COUT);
+
+
+
+
+end Behavioral;
+
