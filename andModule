@@ -1,0 +1,37 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Este módulo faz a operação and bit a bit de A com B --
+
+entity andModule is
+    Port ( A0 : in  STD_LOGIC := '1';
+           A1 : in  STD_LOGIC := '1';
+           A2 : in  STD_LOGIC := '1';
+           A3 : in  STD_LOGIC := '1';
+           B0 : in  STD_LOGIC := '1';
+           B1 : in  STD_LOGIC := '1';
+           B2 : in  STD_LOGIC := '1';
+           B3 : in  STD_LOGIC := '1';
+			  clk : in  STD_LOGIC;
+			  ENABLE : IN STD_LOGIC := '1';
+           OUT0 : out  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+			  ZERO : OUT  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+           OUT3 : out  STD_LOGIC);
+end andModule;
+
+architecture Behavioral of andModule is
+BEGIN
+
+PROCESS (clk) BEGIN
+IF (ENABLE = '1' and rising_edge(clk)) THEN
+OUT0 <= A0 AND B0;
+OUT1 <= A1 AND B1;
+OUT2 <= A2 AND B2;
+OUT3 <= A3 AND B3;
+ZERO <= NOT (A0 AND B0) OR NOT (A1 AND B1) OR NOT (A2 AND B2) OR NOT (A3 AND B3);
+END IF;
+END PROCESS;
+
+end Behavioral;
