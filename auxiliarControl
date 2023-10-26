@@ -1,0 +1,41 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+entity auxiliarControl is
+    Port ( A : in  STD_LOGIC ;
+           B : in  STD_LOGIC ;
+           C : in  STD_LOGIC ;
+			  clk : in  STD_LOGIC ;
+           OUT0 : out  STD_LOGIC;
+           OUT1 : out  STD_LOGIC;
+           OUT2 : out  STD_LOGIC;
+           OUT3 : out  STD_LOGIC;
+           OUT4 : out  STD_LOGIC;
+           OUT5 : out  STD_LOGIC;
+           OUT6 : out  STD_LOGIC;
+           OUT7 : out  STD_LOGIC);
+end auxiliarControl;
+
+architecture Behavioral of auxiliarControl is
+begin
+process (clk) begin
+if rising_edge(clk) then
+OUT0 <= NOT A AND NOT B AND NOT C; 
+
+OUT1 <= NOT A AND NOT B AND C;
+
+OUT2 <= NOT A AND B AND NOT C;
+
+OUT3 <= NOT A AND B AND C;
+
+OUT4 <= A AND NOT B AND NOT C;
+
+OUT5 <= A AND NOT B AND C;
+
+OUT6 <= A AND B AND NOT C;
+
+OUT7 <= A AND B AND C;
+end if;
+end process;
+end Behavioral;
+
+
